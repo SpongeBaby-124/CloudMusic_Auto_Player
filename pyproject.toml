@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cloudmusic-auto-player"
-version = "1.0.0"
+version = "1.0.2"
 description = "网易云音乐 MCP 控制器 - 提供全局快捷键、搜索单曲播放、搜索歌单播放、自定义歌单管理、每日推荐和私人漫游等丰富功能"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
-    { name = "xiduan", email = "lxd4094@foxmail.com" }
+    { name = "xiande", email = "lxd4094@foxmail.com" }
 ]
 keywords = ["netease", "music", "mcp", "automation", "controller"]
 classifiers = [

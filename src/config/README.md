@@ -31,14 +31,14 @@
       "lyrics": "ctrl+alt+d"
     },
     "mac": {
-      "play_pause": "cmd+alt+p",
-      "previous": "cmd+alt+left",
-      "next": "cmd+alt+right",
-      "volume_up": "cmd+alt+up",
-      "volume_down": "cmd+alt+down",
-      "mini_mode": "cmd+alt+m",
-      "like_song": "cmd+alt+l",
-      "lyrics": "cmd+alt+d"
+      "play_pause": "command+option+p",
+      "previous": "command+option+left",
+      "next": "command+option+right",
+      "volume_up": "command+option+up",
+      "volume_down": "command+option+down",
+      "mini_mode": "command+option+m",
+      "like_song": "command+option+l",
+      "lyrics": "command+option+d"
     }
   },
   "custom_hotkeys": {
@@ -72,9 +72,9 @@
 - `win` - Windows键
 
 **Mac**:
-- `cmd` - Command键
+- `command` - Command键
 - `ctrl` - Control键
-- `alt` - Option键
+- `option` - Option键
 - `shift` - Shift键
 
 **示例**:

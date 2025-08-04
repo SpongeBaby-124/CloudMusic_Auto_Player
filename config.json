@@ -1,41 +1,100 @@
 {
-  "_comment": "MCP 客户端配置示例 - 请根据实际路径修改",
-  "mcpServers": {
-    "auto-music-player": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--project",
-        "/path/to/CloudMusic_Auto_Player",
-        "src/server.py"
-      ],
-      "cwd": "/path/to/CloudMusic_Auto_Player"
+  "_comment": "MCP 客户端配置示例 - 请根据实际情况修改",
+  "_environment_setup": {
+    "description": "环境变量设置说明",
+    "NETEASE_MUSIC_PATH": {
+      "description": "网易云音乐客户端路径，用于每日推荐功能",
+      "windows_example": "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
+      "macos_example": "/Applications/NeteaseMusic.app/Contents/MacOS/NeteaseMusic",
+      "setup_instructions": {
+        "windows": "在系统环境变量中设置，或在启动命令前添加: set NETEASE_MUSIC_PATH=路径",
+        "macos_linux": "在 ~/.bashrc 或 ~/.zshrc 中添加: export NETEASE_MUSIC_PATH=路径"
+      }
+    },
+    "CHROMEDRIVER_PATH": {
+      "description": "ChromeDriver可执行文件的绝对路径，用于每日推荐和私人漫游功能（仅Windows支持）",
+      "windows_example": "C:\\path\\to\\chromedriver.exe",
+      "setup_instructions": {
+        "windows": "在系统环境变量中设置，或在启动命令前添加: set CHROMEDRIVER_PATH=路径"
+      },
+      "notes": {
+        "windows": "项目已包含ChromeDriver，默认使用内置版本",
+        "macos": "macOS 不支持每日推荐和私人漫游功能，无需配置此环境变量"
+      }
     }
   },
-  "_examples": {
+  "mcpServers": {
+    "cloudmusic-auto-player": {
+      "command": "uvx",
+      "args": ["cloudmusic-auto-player==1.0.2"],
+      "env": {
+        "NETEASE_MUSIC_PATH": "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
+        "CHROMEDRIVER_PATH": "C:\\path\\to\\chromedriver.exe"
+      }
+    }
+  },
+  "_platform_examples": {
+    "description": "不同平台的配置示例",
     "windows": {
-      "auto-music-player": {
-        "command": "uv",
-        "args": [
-          "run",
-          "--project",
-          "C:\\Users\\YourName\\CloudMusic_Auto_Player",
-          "src/server.py"
-        ],
-        "cwd": "C:\\Users\\YourName\\CloudMusic_Auto_Player"
+      "pypi_package": {
+        "cloudmusic-auto-player": {
+          "command": "uvx",
+          "args": ["cloudmusic-auto-player==1.0.2"],
+          "env": {
+            "NETEASE_MUSIC_PATH": "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
+            "CHROMEDRIVER_PATH": "C:\\path\\to\\chromedriver.exe"
+          }
+        }
+      },
+      "local_project": {
+        "auto-music-player": {
+          "command": "uv",
+          "args": [
+            "run",
+            "--project",
+            "C:\\Users\\YourName\\CloudMusic_Auto_Player",
+            "src/server.py"
+          ],
+          "cwd": "C:\\Users\\YourName\\CloudMusic_Auto_Player",
+          "env": {
+            "NETEASE_MUSIC_PATH": "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
+            "CHROMEDRIVER_PATH": "C:\\Users\\YourName\\CloudMusic_Auto_Player\\src\\chromedriver\\win64\\chromedriver.exe"
+          }
+        }
       }
     },
     "macos": {
-      "auto-music-player": {
-        "command": "uv",
-        "args": [
-          "run",
-          "--project",
-          "/Users/YourName/CloudMusic_Auto_Player",
-          "src/server.py"
-        ],
-        "cwd": "/Users/YourName/CloudMusic_Auto_Player"
+      "pypi_package": {
+        "cloudmusic-auto-player": {
+          "command": "uvx",
+          "args": ["cloudmusic-auto-player==1.0.2"],
+          "env": {
+            "NETEASE_MUSIC_PATH": "/Applications/NeteaseMusic.app/Contents/MacOS/NeteaseMusic"
+          }
+        }
+      },
+      "local_project": {
+        "auto-music-player": {
+          "command": "uv",
+          "args": [
+            "run",
+            "python",
+            "/Users/YourName/CloudMusic_Auto_Player/src/server.py"
+          ],
+          "cwd": "/Users/YourName/CloudMusic_Auto_Player",
+          "env": {
+            "NETEASE_MUSIC_PATH": "/Applications/NeteaseMusic.app/Contents/MacOS/NeteaseMusic"
+          }
+        }
       }
     }
+  },
+  "_notes": {
+    "platform_support": {
+      "windows": "完整功能支持，包括每日推荐和私人漫游",
+      "macos": "仅支持基础功能（全局快捷键、音乐搜索播放），不支持每日推荐和私人漫游"
+    },
+    "configuration_priority": "环境变量 > 配置文件 > 默认值",
+    "validation": "配置完成后建议调用 get_netease_config() 工具验证配置"
   }
 }

@@ -612,79 +612,7 @@ def search_and_play_playlist(query: str = "", playlist_name: str = "", minimize_
 
 # ============ 每日推荐相关 MCP 工具 ============
 
-@mcp.tool()
-def set_netease_music_path(netease_path: str) -> dict:
-    """
-    设置网易云音乐客户端路径（用于每日推荐功能）
-    
-    Args:
-        netease_path: 网易云音乐客户端exe文件的完整路径
-                     例如: C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe
-    
-    Returns:
-        dict: 操作结果，包含success状态和消息
-    """
-    try:
-        import os
-        
-        # 检查路径是否存在
-        if not os.path.exists(netease_path):
-            return {
-                "success": False,
-                "message": f"路径不存在: {netease_path}",
-                "tips": [
-                    "请检查网易云音乐是否已安装",
-                    "常见路径示例:",
-                    "  - C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
-                    "  - C:\\Program Files\\Netease\\CloudMusic\\cloudmusic.exe"
-                ]
-            }
-        
-        # 检查是否是exe文件
-        if not netease_path.lower().endswith('.exe'):
-            return {
-                "success": False,
-                "message": f"请提供可执行文件(.exe)路径: {netease_path}"
-            }
-        
-        # 加载当前配置
-        config = load_netease_config()
-        
-        # 更新路径
-        config["netease_music_path"] = netease_path
-        
-        # 保存配置
-        if save_netease_config(config):
-            logger.info(f"✅ 已设置网易云音乐路径: {netease_path}")
-            
-            # 重置全局控制器实例，使其使用新配置
-            global _daily_controller
-            if _daily_controller:
-                _daily_controller.disconnect()
-                _daily_controller = None
-            
-            return {
-                "success": True,
-                "message": "网易云音乐路径设置成功",
-                "path": netease_path,
-                "platform": get_platform(),
-                "tips": [
-                    "现在可以使用每日推荐播放功能了",
-                    "使用 play_daily_recommend() 来播放每日推荐"
-                ]
-            }
-        else:
-            return {
-                "success": False,
-                "message": "保存配置失败"
-            }
-            
-    except Exception as e:
-        logger.error(f"设置网易云音乐路径失败: {e}")
-        return {
-            "success": False,
-            "message": f"设置失败: {str(e)}"
-        }
+
 
 @mcp.tool()
 def get_netease_config() -> dict:
@@ -750,7 +678,7 @@ def play_daily_recommend() -> dict:
     播放网易云音乐每日推荐歌单
     
     使用预先验证的按钮路径，提供更高的成功率和更快的执行速度。
-    注意: 此功能需要先使用 set_netease_music_path() 设置网易云音乐客户端路径
+    注意: 此功能需要先设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置网易云音乐客户端路径
     
     Returns:
         dict: 播放结果，包含success状态和详细信息
@@ -774,7 +702,7 @@ def play_daily_recommend() -> dict:
             return {
                 "success": False,
                 "message": "网易云音乐路径未配置",
-                "solution": "请先使用 set_netease_music_path() 设置网易云音乐客户端路径"
+                "solution": "请设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置 netease_music_path"
             }
         
         import os
@@ -782,7 +710,7 @@ def play_daily_recommend() -> dict:
             return {
                 "success": False,
                 "message": f"网易云音乐路径无效: {netease_path}",
-                "solution": "请使用 set_netease_music_path() 重新设置正确的路径"
+                "solution": "请重新设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置正确的路径"
             }
         
         # 创建或重用控制器实例
@@ -902,7 +830,7 @@ def play_roaming() -> dict:
     启动网易云音乐私人漫游功能
     
     使用预先验证的按钮路径，提供更高的成功率和更快的执行速度。
-    注意: 此功能需要先使用 set_netease_music_path() 设置网易云音乐客户端路径
+    注意: 此功能需要先设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置网易云音乐客户端路径
     
     Returns:
         dict: 漫游启动结果，包含success状态和详细信息
@@ -926,7 +854,7 @@ def play_roaming() -> dict:
             return {
                 "success": False,
                 "message": "网易云音乐路径未配置",
-                "solution": "请先使用 set_netease_music_path() 设置网易云音乐客户端路径"
+                "solution": "请设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置 netease_music_path"
             }
         
         import os
@@ -934,7 +862,7 @@ def play_roaming() -> dict:
             return {
                 "success": False,
                 "message": f"网易云音乐路径无效: {netease_path}",
-                "solution": "请使用 set_netease_music_path() 重新设置正确的路径"
+                "solution": "请重新设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置正确的路径"
             }
         
         # 创建或重用控制器实例

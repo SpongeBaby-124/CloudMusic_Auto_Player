@@ -146,33 +146,76 @@ def save_playlists_to_file(data: Dict[str, Any]) -> bool:
         return False
 
 def load_netease_config() -> Dict[str, Any]:
-    """加载网易云音乐配置"""
+    """加载网易云音乐配置
+    
+    优先级顺序：
+    1. 环境变量 NETEASE_MUSIC_PATH
+    2. netease_config.json 文件中的配置
+    3. 默认配置
+    """
     try:
         config_path = os.path.join(get_project_root(), "netease_config.json")
+        config = {}
+        
         if os.path.exists(config_path):
             with open(config_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                config = json.load(f)
         else:
             # 创建默认配置
-            default_config = {
+            config = {
                 "netease_music_path": "",
                 "debug_port": 9222,
                 "chromedriver_path": "src/chromedriver/win64/chromedriver.exe",
                 "description": "网易云音乐配置文件 - 用于每日推荐播放功能",
                 "notes": {
-                    "netease_music_path": "网易云音乐客户端exe文件的完整路径，例如: C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe",
+                    "netease_music_path": "网易云音乐客户端exe文件的完整路径，例如: C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe。也可以通过环境变量 NETEASE_MUSIC_PATH 设置",
                     "debug_port": "调试端口号，默认9222",
                     "chromedriver_path": "ChromeDriver的相对路径"
                 }
             }
-            save_netease_config(default_config)
-            return default_config
+            save_netease_config(config)
+        
+        # 优先使用环境变量中的网易云音乐路径
+        env_netease_path = os.environ.get("NETEASE_MUSIC_PATH")
+        if env_netease_path:
+            config["netease_music_path"] = env_netease_path
+            logger.info(f"✅ 使用环境变量中的网易云音乐路径: {env_netease_path}")
+        elif config.get("netease_music_path"):
+            logger.info(f"✅ 使用配置文件中的网易云音乐路径: {config['netease_music_path']}")
+        else:
+            logger.warning("⚠️  网易云音乐路径未配置，请设置环境变量 NETEASE_MUSIC_PATH 或在 netease_config.json 中配置")
+        
+        # 优先使用环境变量中的ChromeDriver路径
+        env_chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
+        if env_chromedriver_path:
+            config["chromedriver_path"] = env_chromedriver_path
+            logger.info(f"✅ 使用环境变量中的ChromeDriver路径: {env_chromedriver_path}")
+        elif config.get("chromedriver_path"):
+            # 如果配置文件中是相对路径，转换为绝对路径
+            chromedriver_path = config["chromedriver_path"]
+            if not os.path.isabs(chromedriver_path):
+                chromedriver_path = os.path.join(get_project_root(), chromedriver_path)
+                config["chromedriver_path"] = chromedriver_path
+            logger.info(f"✅ 使用配置文件中的ChromeDriver路径: {config['chromedriver_path']}")
+        else:
+            # 默认路径，转换为绝对路径
+            default_chromedriver = os.path.join(get_project_root(), "src/chromedriver/win64/chromedriver.exe")
+            config["chromedriver_path"] = default_chromedriver
+            logger.warning(f"⚠️  ChromeDriver路径未配置，使用默认路径: {default_chromedriver}")
+        
+        return config
+        
     except Exception as e:
         logger.error(f"加载网易云音乐配置失败: {e}")
+        # 异常情况下也要处理环境变量和绝对路径
+        default_chromedriver = os.environ.get("CHROMEDRIVER_PATH")
+        if not default_chromedriver:
+            default_chromedriver = os.path.join(get_project_root(), "src/chromedriver/win64/chromedriver.exe")
+        
         return {
-            "netease_music_path": "",
+            "netease_music_path": os.environ.get("NETEASE_MUSIC_PATH", ""),
             "debug_port": 9222,
-            "chromedriver_path": "src/chromedriver/win64/chromedriver.exe"
+            "chromedriver_path": default_chromedriver
         }
 
 def save_netease_config(config: Dict[str, Any]) -> bool:

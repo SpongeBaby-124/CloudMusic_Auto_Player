@@ -181,9 +181,41 @@ MCP工具定义和服务器启动：
 
 ### 2. 每日推荐功能设置
 
-1. 使用 `set_netease_music_path()` 设置网易云路径
+1. 设置网易云音乐路径（二选一）：
+   - 方式一：设置环境变量 `NETEASE_MUSIC_PATH`
+   - 方式二：在 `netease_config.json` 中配置 `netease_music_path`
 2. 确保ChromeDriver可用
 3. 使用 `play_daily_recommend()` 播放
+
+#### 环境变量设置方法
+
+**Windows:**
+```cmd
+# 设置网易云音乐路径
+set NETEASE_MUSIC_PATH=C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe
+
+# 设置ChromeDriver路径（可选，项目已包含Windows版本）
+set CHROMEDRIVER_PATH=C:\path\to\chromedriver.exe
+
+# 永久设置（系统环境变量）
+setx NETEASE_MUSIC_PATH "C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"
+setx CHROMEDRIVER_PATH "C:\path\to\chromedriver.exe"
+```
+
+**macOS/Linux:**
+```bash
+# 添加到 ~/.bashrc 或 ~/.zshrc
+export NETEASE_MUSIC_PATH="/Applications/NeteaseMusic.app/Contents/MacOS/NeteaseMusic"
+export CHROMEDRIVER_PATH="/opt/homebrew/bin/chromedriver"  # macOS with Homebrew
+
+# 然后重新加载配置
+source ~/.bashrc  # 或 source ~/.zshrc
+```
+
+**ChromeDriver安装说明：**
+- **Windows**: 项目已包含ChromeDriver，通常无需额外安装
+- **macOS**: `brew install chromedriver`
+- **Linux**: 下载对应Chrome版本的ChromeDriver并放置到系统PATH中
 
 ### 3. 歌单管理
 
