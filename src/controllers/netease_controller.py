@@ -6,6 +6,7 @@
 
 import subprocess
 import os
+import sys
 import time
 import logging
 import webbrowser
@@ -80,39 +81,51 @@ class NeteaseMusicController:
         try:
             logger.info(f"启动 URL scheme: {scheme_url}")
             
+            # macOS 支持
+            if sys.platform == 'darwin':
+                try:
+                    subprocess.run(["open", scheme_url], check=True)
+                    logger.info("macOS open 命令启动成功")
+                    # macOS 不支持简单的窗口最小化控制，这里略过
+                    return True
+                except Exception as e:
+                    logger.warning(f"macOS open 命令失败: {e}")
+
             # 方法1: 使用 os.startfile (Windows 推荐)
             try:
-                os.startfile(scheme_url)
-                logger.info("URL scheme 启动成功")
-                
-                # 如果需要最小化窗口
-                if minimize_window:
-                    time.sleep(1.5)  # 等待窗口出现
-                    self._minimize_netease_window()
-                
-                return True
+                if hasattr(os, 'startfile'):
+                    os.startfile(scheme_url)
+                    logger.info("URL scheme 启动成功")
+                    
+                    # 如果需要最小化窗口
+                    if minimize_window:
+                        time.sleep(1.5)  # 等待窗口出现
+                        self._minimize_netease_window()
+                    
+                    return True
             except Exception as e:
                 logger.warning(f"os.startfile 失败: {e}")
             
-            # 方法2: 使用 subprocess
-            try:
-                subprocess.run(["cmd", "/c", "start", scheme_url], shell=True, check=True, timeout=5)
-                logger.info("subprocess 启动成功")
-                
-                if minimize_window:
-                    time.sleep(1.5)
-                    self._minimize_netease_window()
-                
-                return True
-            except Exception as e:
-                logger.warning(f"subprocess 失败: {e}")
+            # 方法2: 使用 subprocess (Windows cmd)
+            if sys.platform == 'win32':
+                try:
+                    subprocess.run(["cmd", "/c", "start", scheme_url], shell=True, check=True, timeout=5)
+                    logger.info("subprocess 启动成功")
+                    
+                    if minimize_window:
+                        time.sleep(1.5)
+                        self._minimize_netease_window()
+                    
+                    return True
+                except Exception as e:
+                    logger.warning(f"subprocess 失败: {e}")
             
             # 方法3: 使用 webbrowser
             try:
                 webbrowser.open(scheme_url)
                 logger.info("webbrowser 启动成功")
                 
-                if minimize_window:
+                if minimize_window and sys.platform == 'win32':
                     time.sleep(1.5)
                     self._minimize_netease_window()
                 
@@ -215,4 +228,4 @@ class NeteaseMusicController:
     
     def is_window_control_available(self) -> bool:
         """检查窗口控制功能是否可用"""
-        return WINDOW_CONTROL_AVAILABLE 
+        return WINDOW_CONTROL_AVAILABLE
